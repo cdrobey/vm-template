@@ -21,10 +21,10 @@ cat << EOF >> /etc/rc.local
 #
 # By default this script does nothing.
 
-if [ -x /etc/vm-template/vm-puppet.sh ]
+if [ -x /etc/vm-template/vm-template.sh ]
 then
-	/etc/vm-template/vm-puppet.sh
-	chmod -x /etc/vm-template/vm-puppet.sh
+	/etc/vm-template/vm-template.sh
+	chmod -x /etc/vm-template/vm-template.sh
 fi
 
 exit 0

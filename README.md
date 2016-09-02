@@ -1,1 +1,1 @@
-# vm-tempalte
+# vm-template
