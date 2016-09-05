@@ -28,7 +28,6 @@ cat << EOF >> /etc/rc.local
 if [ -x /etc/vm-template/vm-ansible.sh ]
 then
 	/etc/vm-template/vm-ansible.sh
-	chmod -x /etc/vm-template/vm-ansible.sh
 fi
 
 exit 0

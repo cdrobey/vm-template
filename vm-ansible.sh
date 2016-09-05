@@ -1,14 +1,16 @@
 #!/bin/bash
-USER=ubuntu
 
 # Setup SSH Keys
 dpkg-reconfigure openssh-server > /dev/null
 
 # Add Ansible Keys to deploy User
-cat id_rsa.deploy > ~$USER/.ssh/authorized_keys
+mkdir ~ubuntu/.ssh/
+cat /etc/vm-template/id_rsa.pub.deploy > ~ubuntu/.ssh/authorized_keys
+chmod 600 ~ubuntu/.ssh/authorized_keys
+chown -R ubuntu:ubuntu  ~ubuntu/.ssh/
 
 # Clean up rc.local from initial boot
-cat << EOF >> /etc/rc.local
+cat << EOF > /etc/rc.local
 #!/bin/sh -e
 #
 # rc.local
