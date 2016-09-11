@@ -9,9 +9,6 @@ cat /etc/vm-template/id_rsa.pub.deploy > ~ubuntu/.ssh/authorized_keys
 chmod 600 ~ubuntu/.ssh/authorized_keys
 chown -R ubuntu:ubuntu  ~ubuntu/.ssh/
 
-# Add Python to manage using Ansible
-apt-get update
-apt-get install python
 
 # Clean up rc.local from initial boot
 cat << EOF > /etc/rc.local
