@@ -1,12 +1,29 @@
 #!/bin/bash
+
+#  File: vm-dehydrate.sh
 #
-# Sysprep OS for vmware template creation.  
+#  Use: Cleanse a base Ubuntu Server Image
 #
+#  Description: Performs a removal of all system files and forces an ssh
+#  key update during initial boot. Storage scripts in /etc/vm-template
 #
+#  Command: /etc/vm-template/vm-dehydrate
+#
+# -*- mode: ruby -*-
+# vi: set ft=ruby 
+#
+
+# Update and Upgrade  Apt Repository
+apt-get update
+apt-get -y upgrade
+
+# Add basic packages for Template
+apt-get -y install open-vm-tools openssh-server aptitude 
 
 echo "Removing openssh-server's host keys..."
 rm -vf /etc/ssh/ssh_host_*
 cat /dev/null > /etc/rc.local
+
 cat << EOF >> /etc/rc.local
 #!/bin/sh -e
 #
@@ -29,6 +46,7 @@ fi
 
 exit 0
 EOF
+
 
 echo "Cleaning up /var/mail..."
 rm -vf /var/mail/*
@@ -59,10 +77,21 @@ echo "Cleaning up /var/log..."
 find /var/log -type f -name "*.gz" -exec rm -vf \{\} \;
 find /var/log -type f -name "*.1" -exec rm -vf \{\} \;
 find /var/log -type f -exec truncate -s0 \{\} \;
+
+echo "Cleaning up /var/log... and /mmp"
+rm -rf /tmp/*
+rm -rf /var/tmp/*
+
+echo "Reset Hostname"
+cat /dev/null > /etc/hostname
 	
 echo "Clearing bash history..."
 cat /dev/null > /root/.bash_history
 history -c
+history -w
+
+echo "Cleaning Apt"
+apt-get clean
 
 echo "Process complete..."
-# poweroff
+## poweroff

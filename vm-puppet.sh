@@ -1,5 +1,5 @@
 #!/bin/bash
-PM=puppet.fr.lan
+PM=labpm.fr.lan
 
 # Setup SSH Keys
 dpkg-reconfigure openssh-server > /dev/null
