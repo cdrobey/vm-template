@@ -9,9 +9,6 @@
 #
 #  Command: /etc/vm-template/vm-dehydrate
 #
-# -*- mode: ruby -*-
-# vi: set ft=ruby 
-#
 
 # Update and Upgrade  Apt Repository
 apt-get update
