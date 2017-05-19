@@ -10,6 +10,10 @@
 #  Command: /etc/vm-template/vm-dehydrate-ubuntu.sh
 #
 
+# some variables
+export ADMIN_USER="ubuntu"
+export ADMIN_PUBLIC_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7YrtR3tfvCNWZ83k8JGdJxzha0esIKaszA/prM6asxbVRg/g4WpRFjIDRTIPcycynQ3teDjAeRXsz/Ri8bgfWQEMsAFS+M0PEQV14+qxUGeaB8AU/JodmZ1cjCEN961MAInvQnbUHYEEDDEkRo0CEG5ea4ztPvDCIBV3qW5MZbkHUuAF1s8Tpr7pO4OXkkngZEcAgUscemaQMGr/qR0fJECDnliRuGH3vFoJnZeh3ElTUM71eb3IQeMkaivQ+F1kUOZCufu59pCJbDPYF/Sk1sejv8QnUfs8f3CvuqElZ0uFjuWMgbNWRojcj1LB/TFK5M3M+94HAhzUJp/tkHDM9 chris@familyroberosn.com"
+
 # Update and Upgrade  Apt Repository
 apt-get update
 apt-get -y upgrade
@@ -19,6 +23,24 @@ apt-get -y install open-vm-tools openssh-server aptitude
 
 # "Removing openssh-server's host keys..."
 rm -vf /etc/ssh/ssh_host_*
+
+# add user 'ADMIN_USER'. User is created during the Ubuntu installation.
+# adduser $ADMIN_USER
+ 
+# add public SSH key
+rm -rf /home/$ADMIN_USER/.ssh
+mkdir -m 700 /home/$ADMIN_USER/.ssh
+chown $ADMIN_USER:$ADMIN_USER /home/$ADMIN_USER/.ssh
+echo $ADMIN_PUBLIC_KEY > /home/$ADMIN_USER/.ssh/authorized_keys
+chmod 600 /home/$ADMIN_USER/.ssh/authorized_keys
+chown $ADMIN_USER:$ADMIN_USER /home/$ADMIN_USER/.ssh/authorized_keys
+ 
+# add support for ssh-add
+echo 'eval $(ssh-agent) > /dev/null' >> /home/$ADMIN_USER/.bashrc
+ 
+# add user 'ADMIN_USER' to sudoers.  Sudoers is created during the Ubuntu installation.
+#echo "$ADMIN_USER    ALL = NOPASSWD: ALL" > /etc/sudoers.d/$ADMIN_USER
+#chmod 0440 /etc/sudoers.d/$ADMIN_USER
 
 # "Cleaning up /var/mail..."
 rm -vf /var/mail/*
