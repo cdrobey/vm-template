@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#  File: vm-dehydrate.sh
+#  File: vm-dehydrate-ubuntu.sh
 #
 #  Use: Cleanse a base Ubuntu Server Image
 #
 #  Description: Performs a removal of all system files and forces an ssh
 #  key update during initial boot. Storage scripts in /etc/vm-template
 #
-#  Command: /etc/vm-template/vm-dehydrate
+#  Command: /etc/vm-template/vm-dehydrate-ubuntu.sh
 #
 
 # Update and Upgrade  Apt Repository
@@ -17,53 +17,53 @@ apt-get -y upgrade
 # Add basic packages for Template
 apt-get -y install open-vm-tools openssh-server aptitude 
 
-echo "Removing openssh-server's host keys..."
+# "Removing openssh-server's host keys..."
 rm -vf /etc/ssh/ssh_host_*
 
-echo "Cleaning up /var/mail..."
+# "Cleaning up /var/mail..."
 rm -vf /var/mail/*
 
-echo "Clean up apt cache..."
+# "Clean up apt cache..."
 find /var/cache/apt/archives -type f -exec rm -vf \{\} \;
 
-echo "Clean up ntp..."
+# "Clean up ntp..."
 rm -vf /var/lib/ntp/ntp.drift
 rm -vf /var/lib/ntp/ntp.conf.dhcp
 
-echo "Clean up dhcp leases..."
+# "Clean up dhcp leases..."
 rm -vf /var/lib/dhcp/*.leases*
 rm -vf /var/lib/dhcp3/*.leases*
 
-echo "Clean up udev rules..."
+# "Clean up udev rules..."
 rm -vf /etc/udev/rules.d/70-persistent-cd.rules 
 rm -vf /etc/udev/rules.d/70-persistent-net.rules
 
-echo "Clean up urandom seed..."
+# "Clean up urandom seed..."
 rm -vf /var/lib/urandom/random-seed
 
-echo "Clean up backups..."
+# "Clean up backups..."
 rm -vrf /var/backups/*;
 rm -vf /etc/shadow- /etc/passwd- /etc/group- /etc/gshadow- /etc/subgid- /etc/subuid-
 
-echo "Cleaning up /var/log..."
+# "Cleaning up /var/log..."
 find /var/log -type f -name "*.gz" -exec rm -vf \{\} \;
 find /var/log -type f -name "*.1" -exec rm -vf \{\} \;
 find /var/log -type f -exec truncate -s0 \{\} \;
 
-echo "Cleaning up /var/log... and /mmp"
+# "Cleaning up /var/log... and /mmp"
 rm -rf /tmp/*
 rm -rf /var/tmp/*
 
-echo "Reset Hostname"
+# "Reset Hostname"
 cat /dev/null > /etc/hostname
 	
-echo "Clearing bash history..."
+# "Clearing bash history..."
 cat /dev/null > /root/.bash_history
 history -c
 history -w
 
-echo "Cleaning Apt"
+# "Cleaning Apt"
 apt-get clean
 
-echo "Process complete..."
-## poweroff
+# "Process complete..."
+poweroff

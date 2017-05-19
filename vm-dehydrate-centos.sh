@@ -1,3 +1,15 @@
+#!/bin/bash
+
+#  File: vm-dehydrate-centos.sh
+#
+#  Use: Cleanse a base Centos Server Image
+#
+#  Description: Performs a removal of all system files and forces an ssh
+#  key update during initial boot. Storage scripts in /etc/vm-template
+#
+#  Command: /etc/vm-template/vm-dehydrate-centos.sh
+#
+
 # some variables
 export ADMIN_USER="centos"
 export ADMIN_PUBLIC_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7YrtR3tfvCNWZ83k8JGdJxzha0esIKaszA/prM6asxbVRg/g4WpRFjIDRTIPcycynQ3teDjAeRXsz/Ri8bgfWQEMsAFS+M0PEQV14+qxUGeaB8AU/JodmZ1cjCEN961MAInvQnbUHYEEDDEkRo0CEG5ea4ztPvDCIBV3qW5MZbkHUuAF1s8Tpr7pO4OXkkngZEcAgUscemaQMGr/qR0fJECDnliRuGH3vFoJnZeh3ElTUM71eb3IQeMkaivQ+F1kUOZCufu59pCJbDPYF/Sk1sejv8QnUfs8f3CvuqElZ0uFjuWMgbNWRojcj1LB/TFK5M3M+94HAhzUJp/tkHDM9 chris@familyroberosn.com"
