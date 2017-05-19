@@ -19,31 +19,6 @@ apt-get -y install open-vm-tools openssh-server aptitude
 
 echo "Removing openssh-server's host keys..."
 rm -vf /etc/ssh/ssh_host_*
-cat /dev/null > /etc/rc.local
-
-cat << EOF >> /etc/rc.local
-#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-
-if [ -x /etc/vm-template/vm-template.sh ]
-then
-	/etc/vm-template/vm-template.sh
-	chmod -x /etc/vm-template/vm-template.sh
-fi
-
-exit 0
-EOF
-
 
 echo "Cleaning up /var/mail..."
 rm -vf /var/mail/*
