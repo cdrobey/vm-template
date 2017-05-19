@@ -90,4 +90,4 @@ passwd -d root
 history -cw
  
 # shutdown
-# init 0
+init 0
