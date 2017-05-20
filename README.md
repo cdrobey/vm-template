@@ -12,4 +12,4 @@ This project cleanses minimal installations of Ubuntu/Centos for creating VM Tem
 The script vm-dehydrate-ubuntu.sh removes all system generated files and deletes system network devices from an Ubuntu 16.04 Installation.
 
 ## Building an Centos VM Template
-The script vm-dehydrate-centos.sh removes all system generated files and deletes system network devices from a Centos 7 Installation.# vm-template
+The script vm-dehydrate-centos.sh removes all system generated files and deletes system network devices from a Centos 7 Installation.
