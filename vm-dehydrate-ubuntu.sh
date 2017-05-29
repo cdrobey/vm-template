@@ -46,8 +46,8 @@ chown $ADMIN_USER:$ADMIN_USER /home/$ADMIN_USER/.ssh/authorized_keys
 echo 'eval $(ssh-agent) > /dev/null' >> /home/$ADMIN_USER/.bashrc
  
 # add user 'ADMIN_USER' to sudoers.  Sudoers is created during the Ubuntu installation.
-#echo "$ADMIN_USER    ALL = NOPASSWD: ALL" > /etc/sudoers.d/$ADMIN_USER
-#chmod 0440 /etc/sudoers.d/$ADMIN_USER
+echo "$ADMIN_USER    ALL = NOPASSWD: ALL" > /etc/sudoers.d/$ADMIN_USER
+chmod 0440 /etc/sudoers.d/$ADMIN_USER
 
 # "Cleaning up /var/mail..."
 rm -vf /var/mail/*
