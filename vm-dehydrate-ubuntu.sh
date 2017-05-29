@@ -11,7 +11,7 @@
 #
 
 # some variables
-export ADMIN_USER="ubuntu"
+export ADMIN_USER="deploy"
 export ADMIN_PUBLIC_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7YrtR3tfvCNWZ83k8JGdJxzha0esIKaszA/prM6asxbVRg/g4WpRFjIDRTIPcycynQ3teDjAeRXsz/Ri8bgfWQEMsAFS+M0PEQV14+qxUGeaB8AU/JodmZ1cjCEN961MAInvQnbUHYEEDDEkRo0CEG5ea4ztPvDCIBV3qW5MZbkHUuAF1s8Tpr7pO4OXkkngZEcAgUscemaQMGr/qR0fJECDnliRuGH3vFoJnZeh3ElTUM71eb3IQeMkaivQ+F1kUOZCufu59pCJbDPYF/Sk1sejv8QnUfs8f3CvuqElZ0uFjuWMgbNWRojcj1LB/TFK5M3M+94HAhzUJp/tkHDM9 chris@familyroberosn.com"
 
 # Update and Upgrade  Apt Repository
@@ -23,6 +23,13 @@ apt-get -y install open-vm-tools openssh-server aptitude
 
 # "Removing openssh-server's host keys..."
 rm -vf /etc/ssh/ssh_host_*
+
+# Recreate host keys on next boot.
+#add check for ssh keys on reboot...regenerate if neccessary
+sed -i -e 's|exit 0||' /etc/rc.local
+sed -i -e 's|.*test -f /etc/ssh/ssh_host_dsa_key.*||' /etc/rc.local
+bash -c 'echo "test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server" >> /etc/rc.local'
+bash -c 'echo "exit 0" >> /etc/rc.local'
 
 # add user 'ADMIN_USER'. User is created during the Ubuntu installation.
 # adduser $ADMIN_USER
