@@ -8,8 +8,8 @@
 # SETUP & RUN
 # curl -sL https://raw.githubusercontent.com/jimangel/ubuntu-18.04-scripts/master/prepare-ubuntu-18.04-template.sh | sudo -E bash -
 
-if [ `id -u` -ne 0 ]; then
-	echo Need sudo
+if [ "$(id -u)" -ne 0 ]; then
+	echo "Need sudo"
 	exit 1
 fi
 
