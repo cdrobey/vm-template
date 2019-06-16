@@ -1,98 +1,95 @@
 #!/bin/bash
+######################################################
+#### WARNING PIPING TO BASH IS STUPID: DO NOT USE THIS
+######################################################
+# modified from: jcppkkk/prepare-ubuntu-template.sh
+# TESTED ON UBUNTU 18.04 LTS
 
-#  File: vm-dehydrate-ubuntu.sh
-#
-#  Use: Cleanse a base Ubuntu Server Image
-#
-#  Description: Performs a removal of all system files and forces an ssh
-#  key update during initial boot. Storage scripts in /etc/vm-template
-#
-#  Command: /etc/vm-template/vm-dehydrate-ubuntu.sh
-#
+# SETUP & RUN
+# curl -sL https://raw.githubusercontent.com/jimangel/ubuntu-18.04-scripts/master/prepare-ubuntu-18.04-template.sh | sudo -E bash -
 
-# some variables
-export ADMIN_USER="deploy"
-export ADMIN_PUBLIC_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7YrtR3tfvCNWZ83k8JGdJxzha0esIKaszA/prM6asxbVRg/g4WpRFjIDRTIPcycynQ3teDjAeRXsz/Ri8bgfWQEMsAFS+M0PEQV14+qxUGeaB8AU/JodmZ1cjCEN961MAInvQnbUHYEEDDEkRo0CEG5ea4ztPvDCIBV3qW5MZbkHUuAF1s8Tpr7pO4OXkkngZEcAgUscemaQMGr/qR0fJECDnliRuGH3vFoJnZeh3ElTUM71eb3IQeMkaivQ+F1kUOZCufu59pCJbDPYF/Sk1sejv8QnUfs8f3CvuqElZ0uFjuWMgbNWRojcj1LB/TFK5M3M+94HAhzUJp/tkHDM9 chris@familyroberosn.com"
+if [ `id -u` -ne 0 ]; then
+	echo Need sudo
+	exit 1
+fi
 
-# Update and Upgrade  Apt Repository
-apt-get update
-apt-get -y upgrade
+set -v
 
-# Add basic packages for Template
-apt-get -y install open-vm-tools openssh-server aptitude 
+#update apt-cache
+apt update -y
+apt upgrade -y
 
-# "Removing openssh-server's host keys..."
-rm -vf /etc/ssh/ssh_host_*
+#install packages
+apt install -y open-vm-tools
 
-# Recreate host keys on next boot.
-#add check for ssh keys on reboot...regenerate if neccessary
-sed -i -e 's|exit 0||' /etc/rc.local
-sed -i -e 's|.*test -f /etc/ssh/ssh_host_dsa_key.*||' /etc/rc.local
-bash -c 'echo "test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server" >> /etc/rc.local'
-bash -c 'echo "exit 0" >> /etc/rc.local'
+#Stop services for cleanup
+service rsyslog stop
 
-# add user 'ADMIN_USER'. User is created during the Ubuntu installation.
-# adduser $ADMIN_USER
- 
-# add public SSH key
-rm -rf /home/$ADMIN_USER/.ssh
-mkdir -m 700 /home/$ADMIN_USER/.ssh
-chown $ADMIN_USER:$ADMIN_USER /home/$ADMIN_USER/.ssh
-echo $ADMIN_PUBLIC_KEY > /home/$ADMIN_USER/.ssh/authorized_keys
-chmod 600 /home/$ADMIN_USER/.ssh/authorized_keys
-chown $ADMIN_USER:$ADMIN_USER /home/$ADMIN_USER/.ssh/authorized_keys
- 
-# add support for ssh-add
-echo 'eval $(ssh-agent) > /dev/null' >> /home/$ADMIN_USER/.bashrc
- 
-# add user 'ADMIN_USER' to sudoers.  Sudoers is created during the Ubuntu installation.
-echo "$ADMIN_USER    ALL = NOPASSWD: ALL" > /etc/sudoers.d/$ADMIN_USER
-chmod 0440 /etc/sudoers.d/$ADMIN_USER
+#clear audit logs
+if [ -f /var/log/wtmp ]; then
+    truncate -s0 /var/log/wtmp
+fi
+if [ -f /var/log/lastlog ]; then
+    truncate -s0 /var/log/lastlog
+fi
 
-# "Cleaning up /var/mail..."
-rm -vf /var/mail/*
-
-# "Clean up apt cache..."
-find /var/cache/apt/archives -type f -exec rm -vf \{\} \;
-
-# "Clean up ntp..."
-rm -vf /var/lib/ntp/ntp.drift
-rm -vf /var/lib/ntp/ntp.conf.dhcp
-
-# "Clean up dhcp leases..."
-rm -vf /var/lib/dhcp/*.leases*
-rm -vf /var/lib/dhcp3/*.leases*
-
-# "Clean up udev rules..."
-rm -vf /etc/udev/rules.d/70-persistent-cd.rules 
-rm -vf /etc/udev/rules.d/70-persistent-net.rules
-
-# "Clean up urandom seed..."
-rm -vf /var/lib/urandom/random-seed
-
-# "Clean up backups..."
-rm -vrf /var/backups/*;
-rm -vf /etc/shadow- /etc/passwd- /etc/group- /etc/gshadow- /etc/subgid- /etc/subuid-
-
-# "Cleaning up /var/log..."
-find /var/log -type f -name "*.gz" -exec rm -vf \{\} \;
-find /var/log -type f -name "*.1" -exec rm -vf \{\} \;
-find /var/log -type f -exec truncate -s0 \{\} \;
-
-# "Cleaning up /var/log... and /mmp"
+#cleanup /tmp directories
 rm -rf /tmp/*
 rm -rf /var/tmp/*
 
-# "Reset Hostname"
-cat /dev/null > /etc/hostname
-	
-# "Clearing bash history..."
-cat /dev/null > /root/.bash_history
-history -c
+#cleanup current ssh keys
+rm -f /etc/ssh/ssh_host_*
+
+#add check for ssh keys on reboot...regenerate if neccessary
+cat << 'EOL' | sudo tee /etc/rc.local
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# dynamically create hostname (optional)
+if hostname | grep localhost; then
+    hostnamectl set-hostname "$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')"
+fi
+
+test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server
+exit 0
+EOL
+
+# make sure the script is executable
+chmod +x /etc/rc.local
+
+#reset hostname
+# prevent cloudconfig from preserving the original hostname
+sed -i 's/preserve_hostname: false/preserve_hostname: true/g' /etc/cloud/cloud.cfg
+truncate -s0 /etc/hostname
+hostnamectl set-hostname localhost
+
+#cleanup apt
+apt clean
+
+# disable swap
+sudo swapoff --all
+sudo sed -ri '/\sswap\s/s/^#?/#/' /etc/fstab
+
+# set dhcp to use mac - this is a little bit of a hack but I need this to be placed under the active nic settings
+# also look in /etc/netplan for other config files
+sed -i 's/optional: true/dhcp-identifier: mac/g' /etc/netplan/50-cloud-init.yaml
+
+# cleans out all of the cloud-init cache / logs - this is mainly cleaning out networking info
+sudo cloud-init clean --logs
+
+#cleanup shell history
+cat /dev/null > ~/.bash_history && history -c
 history -w
 
-# "Cleaning Apt"
-apt-get clean
-
-# "Process complete..."
-poweroff
+#shutdown
+shutdown -h now
