@@ -11,7 +11,7 @@ This project cleanses minimal installations of Ubuntu/Centos for creating VM Tem
 ## Building an Ubuntu VM Template
 The script vm-dehydrate-ubuntu.sh removes all system generated files and deletes system network devices from an Ubuntu 18.04 Installation.
 
-If you are using this to build a golden image for vsphere 6.5 a VMware KB exists that must be followed to properly customize the image.
+If you are using this to build a golden image for vsphere 6.5 a VMware KB exists that must be followed to properly customize the image.  Cloud Init conflicts with Open VM Tools and you need to remove Cloud Init.
 
 https://kb.vmware.com/s/article/54986
 
