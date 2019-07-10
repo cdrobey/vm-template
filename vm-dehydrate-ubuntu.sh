@@ -42,7 +42,7 @@ rm -f /etc/ssh/ssh_host_*
 
 #cleanup machine ids
 rm /etc/machine_id
-/var/lib/dbus/machine-id
+rm /var/lib/dbus/machine-id
 
 #add check for ssh keys on reboot...regenerate if neccessary
 cat << 'EOL' | sudo tee /etc/rc.local
@@ -65,6 +65,8 @@ if hostname | grep localhost; then
 fi
 
 test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server
+test -f /etc/machine_id || systemd-machine-id-setup
+
 exit 0
 EOL
 
