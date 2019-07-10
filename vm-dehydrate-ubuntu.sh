@@ -43,7 +43,7 @@ rm -f /etc/ssh/ssh_host_*
 #cleanup machine ids
 truncate -s 0 /etc/machine-id
 rm /var/lib/dbus/machine-id
-ln -s /etc/machine-id 
+ln -s /etc/machine-id /var/lib/dbus/machine-id
 
 #add check for ssh keys on reboot...regenerate if neccessary
 cat << 'EOL' | sudo tee /etc/rc.local
