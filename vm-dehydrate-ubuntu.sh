@@ -59,6 +59,11 @@ cat << 'EOL' | sudo tee /etc/rc.local
 #
 # By default this script does nothing.
 
+#cleanup machine ids
+rm /etc/machine_id
+rm /var/lib/dbus/machine-id
+systemd-machine-id-setup
+
 # dynamically create hostname (optional)
 if hostname | grep localhost; then
     hostnamectl set-hostname "$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '')"
